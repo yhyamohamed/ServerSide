@@ -1,5 +1,3 @@
-package serverTest;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,12 +5,10 @@ import java.net.Socket;
 public class Server {
 
     private ServerSocket serverSocket;
-    private ServerHandler SHandler;
-
 
     public Server()  {
         try {
-            serverSocket = new ServerSocket(6654);
+            serverSocket = new ServerSocket(5001);
 
         } catch (IOException e) {
             e.printStackTrace();
