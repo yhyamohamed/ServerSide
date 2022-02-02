@@ -119,13 +119,21 @@ public class ServerHandler extends Thread {
                         break;
                     case "getOpponentId" :
                         int id=Integer.parseInt(requestObject.get("playerid").getAsString());
+                        System.out.println("getopponentidserver");
                         if(id==1)
                         {
                             responseObject.addProperty("opponentid",2);
+                            ServerHandler opponethandler=players.get(id);
+                                opponethandler.dataOutputStream.writeUTF(responseObject.toString());
+                            System.out.println(id);
 
                         } else {
                             responseObject.addProperty("opponentid",1);
+                            ServerHandler opponethandler=players.get(id);
+                            opponethandler.dataOutputStream.writeUTF(responseObject.toString());
+                            System.out.println(id);
                         }
+                        break;
 
                     case "finish_game":
 
