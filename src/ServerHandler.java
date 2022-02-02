@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class ServerHandler extends Thread {
 
@@ -14,7 +15,8 @@ public class ServerHandler extends Thread {
     static ArrayList<ServerHandler> clients = new ArrayList<>();
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
-
+    private Socket socket;
+    static HashMap<Integer,ServerHandler> players = new HashMap<>();
 
     public ServerHandler(Socket c)
     {
@@ -22,6 +24,7 @@ public class ServerHandler extends Thread {
             dataInputStream = new DataInputStream(c.getInputStream());
             dataOutputStream = new DataOutputStream(c.getOutputStream());
             clients.add(this);
+            socket=c;
             start();
         } catch (IOException e) {
             close(dataInputStream, dataOutputStream);
@@ -57,6 +60,7 @@ public class ServerHandler extends Thread {
                             responseObject.addProperty("score", player.getScore());
                             responseObject.addProperty("wins", player.getWins());
                             responseObject.addProperty("losses", player.getLosses());
+                            players.put(player.getId(),this);
                             dataOutputStream.writeUTF(responseObject.toString());
                         }
                         break;
@@ -101,6 +105,27 @@ public class ServerHandler extends Thread {
                             //send responseObject to client
                         }
                         break;
+                    case "play" :
+                            int opponentID=Integer.parseInt(requestObject.get("opponet").getAsString());
+                            String position=requestObject.get("position").getAsString();
+                            String sign=requestObject.get("sign").getAsString();
+                            ServerHandler opponetSocket=players.get(opponentID);
+                            responseObject.addProperty("type","oponnetmove");
+                            responseObject.addProperty("position",position);
+                            responseObject.addProperty("opponentsing",sign);
+
+                            opponetSocket.dataOutputStream.writeUTF(responseObject.toString());;
+
+                        break;
+                    case "getOpponentId" :
+                        int id=Integer.parseInt(requestObject.get("playerid").getAsString());
+                        if(id==1)
+                        {
+                            responseObject.addProperty("opponentid",2);
+
+                        } else {
+                            responseObject.addProperty("opponentid",1);
+                        }
 
                     case "finish_game":
 
