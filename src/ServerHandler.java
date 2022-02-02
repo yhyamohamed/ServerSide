@@ -48,7 +48,7 @@ public class ServerHandler extends Thread {
                         Player player = login(requestObject);
                         if(player == null){
                             responseObject.addProperty("successful", "false");
-                            //Send responseObject to client
+                            dataOutputStream.writeUTF(responseObject.toString());
                         } else {
                             System.out.println(player.getId());
                             responseObject.addProperty("successful", "true");
@@ -57,7 +57,7 @@ public class ServerHandler extends Thread {
                             responseObject.addProperty("score", player.getScore());
                             responseObject.addProperty("wins", player.getWins());
                             responseObject.addProperty("losses", player.getLosses());
-                            //send responseObject to client
+                            dataOutputStream.writeUTF(responseObject.toString());
                         }
                         break;
 
@@ -70,10 +70,10 @@ public class ServerHandler extends Thread {
 
                         if(signup(requestObject)) {
                             responseObject.addProperty("successful", "true");
-                            //Show login Scene
+                            dataOutputStream.writeUTF(responseObject.toString());
                         } else {
                             responseObject.addProperty("successful", "false");
-                            //Respond to client with sign up error
+                            dataOutputStream.writeUTF(responseObject.toString());
                         }
                         break;
 
