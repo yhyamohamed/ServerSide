@@ -50,10 +50,12 @@ public class ServerHandler extends Thread {
 
                         Player player = login(requestObject);
                         if(player == null){
+                            responseObject.addProperty("type","loginresponse");
                             responseObject.addProperty("successful", "false");
                             dataOutputStream.writeUTF(responseObject.toString());
                         } else {
                             System.out.println(player.getId());
+                            responseObject.addProperty("type","loginresponse");
                             responseObject.addProperty("successful", "true");
                             responseObject.addProperty("id", player.getId());
                             responseObject.addProperty("username", player.getUsername());
@@ -107,12 +109,14 @@ public class ServerHandler extends Thread {
                         break;
                     case "play" :
                             int opponentID=Integer.parseInt(requestObject.get("opponet").getAsString());
+                        System.out.println("play"+opponentID);
                             String position=requestObject.get("position").getAsString();
                             String sign=requestObject.get("sign").getAsString();
                             ServerHandler opponetSocket=players.get(opponentID);
                             responseObject.addProperty("type","oponnetmove");
                             responseObject.addProperty("position",position);
                             responseObject.addProperty("opponentsing",sign);
+                        System.out.println("player position"+position);
 
                             opponetSocket.dataOutputStream.writeUTF(responseObject.toString());;
 
@@ -123,12 +127,14 @@ public class ServerHandler extends Thread {
                         if(id==1)
                         {
                             responseObject.addProperty("opponentid",2);
+                            responseObject.addProperty("turn",true);
                             ServerHandler opponethandler=players.get(id);
                                 opponethandler.dataOutputStream.writeUTF(responseObject.toString());
                             System.out.println(id);
 
                         } else {
                             responseObject.addProperty("opponentid",1);
+                            responseObject.addProperty("turn",false);
                             ServerHandler opponethandler=players.get(id);
                             opponethandler.dataOutputStream.writeUTF(responseObject.toString());
                             System.out.println(id);
