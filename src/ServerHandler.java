@@ -17,6 +17,7 @@ public class ServerHandler extends Thread {
     private DataOutputStream dataOutputStream;
     private Socket socket;
     static HashMap<Integer,ServerHandler> players = new HashMap<>();
+    private int currentID;
 
     public ServerHandler(Socket c)
     {
@@ -63,6 +64,7 @@ public class ServerHandler extends Thread {
                             responseObject.addProperty("wins", player.getWins());
                             responseObject.addProperty("losses", player.getLosses());
                             players.put(player.getId(),this);
+                            this.currentID = player.getId();
                             dataOutputStream.writeUTF(responseObject.toString());
                         }
                         break;
@@ -144,6 +146,12 @@ public class ServerHandler extends Thread {
                     case "finish_game":
 
                         finishGame(requestObject);
+                        break;
+
+                    case "client_close":
+                        clients.remove(this);
+                        players.remove(this.currentID);
+                        System.out.println("Player with id " + this.currentID + " closed the client.");
                         break;
 
                 }
