@@ -171,6 +171,7 @@ public class ServerHandler extends Thread {
                         int acceptedId=Integer.parseInt(requestObject.get("accepted").getAsString());
                         int acceptedGameID=requestObject.get("game_id").getAsInt();
                         responseObject.addProperty("type","yourinvetationaccepted");
+                        responseObject.addProperty("game_id",acceptedGameID);
                         responseObject.addProperty("whoaccepted",accepterId);
                         ServerHandler acceptedhandler=players.get(acceptedId);
                         System.out.println(players);
