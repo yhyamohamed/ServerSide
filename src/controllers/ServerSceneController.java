@@ -14,6 +14,22 @@ public class ServerSceneController {
     private Button stopBtn1;
     private boolean clicked = false;
 
+// t3ref el columns   11111111111111
+//    public TableView<Player> users_table;
+//    public TableColumn<Player, String> username;
+    ///
+//    public ObservableList<Player> getOnlineUsers() {
+//        ObservableList<Player> list = FXCollections.observableArrayList();
+//        // get user bring observable list        222222
+//        Player player1 = new Player();
+//        List<Player> players =  player1.findOnlinePlayers();
+//        for (Player player : players) {
+//            list.add(player);
+//        }
+//        return list;
+//    }
+
+
     //    Server server2 = new Server();
 //    Button startBtn, Button stopBtn
     public ServerSceneController(ServerScene serverScene1, Stage primaryStage) {
@@ -33,6 +49,8 @@ public class ServerSceneController {
                 if (!clicked) {
                     new Server();
                     clicked = true;
+//                    username.setCellValueFactory(new PropertyValueFactory<Player, String>("username"));
+//                    users_table.setItems(getOnlineUsers());
                     System.out.println("start server after new server()");
                 }
             }
@@ -46,10 +64,12 @@ public class ServerSceneController {
                 if (clicked) {
                     Server.close();
                     clicked = false;
+
                     System.out.println("close server");
                 }
             }
         };
     }
+
 
 }

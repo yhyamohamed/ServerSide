@@ -104,7 +104,7 @@
     -fx-border-width : 2px;
     -fx-font-size: 20;
     -fx-font-weight: bold;
-    -fx-text-fill: rgb(220,220,220); 
+    -fx-text-fill: rgb(220,220,220);
 }
 
 .stop_server_button:pressed {

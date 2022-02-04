@@ -243,4 +243,39 @@ public class Player {
         return offlinePlayers;
     }
 
+    public ArrayList<Player> findAllPlayers() {
+
+        ConnectDB connectDB = new ConnectDB();
+
+        String sql = "select * from player ";
+
+        ArrayList<Player> allPlayers = new ArrayList<>();
+
+        try (Connection con = connectDB.getConnection(); Statement st = con.createStatement();) {
+
+            ResultSet rs = st.executeQuery(sql);
+
+            while (rs.next()) {
+                Player player = new Player();
+
+                player.setUsername(rs.getString(1));        //username
+                player.setId(rs.getInt(2));                //id
+                player.setOnline(rs.getBoolean(3));        //online
+                player.setHashedPassword(rs.getString(4)); //pw
+                player.setWins(rs.getInt(5));              //wins
+                player.setLosses(rs.getInt(6));            //losses
+                player.setScore(rs.getInt(7));
+
+                allPlayers.add(player);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return allPlayers;
+
+
+}
+
 }
