@@ -47,6 +47,8 @@ public class ServerHandler extends Thread {
                 JsonObject requestObject = JsonParser.parseString(lineSent).getAsJsonObject();
                 String type = requestObject.get("type").getAsString();
                 JsonObject responseObject = new JsonObject();
+                ServerHandler opponentSocket;
+                int opponentID;
                 Game game;
                 switch (type) {
                     case "login":
@@ -95,52 +97,55 @@ public class ServerHandler extends Thread {
                         //Show gameboard with the response object with the game id
                         break;
 
-                    case "move":
-
-                        GameRecord gameRecord = move(requestObject);
-                        if(gameRecord == null) {
-                            responseObject.addProperty("successful", "false");
-                            //send responseObject to client
-                        } else {
-                            responseObject.addProperty("successful", "true");
-                            responseObject.addProperty("game_id", gameRecord.getGameID());
-                            responseObject.addProperty("player_x_id", gameRecord.getPlayerXID());
-                            responseObject.addProperty("player_o_id", gameRecord.getPlayerOID());
-                            responseObject.addProperty("step_number", gameRecord.getStepNumber());
-                            responseObject.addProperty("step", Arrays.toString(gameRecord.getStep()));
-                            //send responseObject to client
-                        }
-                        break;
+//                    case "move":
+//
+//                        GameRecord gameRecord = move(requestObject);
+//                        if(gameRecord == null) {
+//                            responseObject.addProperty("successful", "false");
+//                            //send responseObject to client
+//                        } else {
+//                            responseObject.addProperty("successful", "true");
+//                            responseObject.addProperty("game_id", gameRecord.getGameID());
+//                            responseObject.addProperty("player_x_id", gameRecord.getPlayerXID());
+//                            responseObject.addProperty("player_o_id", gameRecord.getPlayerOID());
+//                            responseObject.addProperty("step_number", gameRecord.getStepNumber());
+//                            responseObject.addProperty("step", Arrays.toString(gameRecord.getStep()));
+//                            //send responseObject to client
+//                        }
+//                        break;
                     case "play" :
-                            int opponentID=Integer.parseInt(requestObject.get("opponet").getAsString());
+                        opponentID=Integer.parseInt(requestObject.get("opponet").getAsString());
                         System.out.println("play"+opponentID);
                             String position=requestObject.get("position").getAsString();
                             String sign=requestObject.get("sign").getAsString();
-                            ServerHandler opponetSocket=players.get(opponentID);
+                            opponentSocket=players.get(opponentID);
                             responseObject.addProperty("type","oponnetmove");
                             responseObject.addProperty("position",position);
                             responseObject.addProperty("opponentsing",sign);
-                        System.out.println("player position"+position);
 
-                            opponetSocket.dataOutputStream.writeUTF(responseObject.toString());;
+                            requestObject.addProperty("player_id", this.currentID);
+                            GameRecord gameRecord = move(requestObject);
+
+                            opponentSocket.dataOutputStream.writeUTF(responseObject.toString());;
 
                         break;
                     case "getOpponentId" :
-                        int id=Integer.parseInt(requestObject.get("playerid").getAsString());
+                        //int id=Integer.parseInt(requestObject.get("playerid").getAsString());
+                        int id = requestObject.get("playerid").getAsInt();
                         System.out.println("getopponentidserver");
                         if(id==1)
                         {
                             responseObject.addProperty("opponentid",2);
                             responseObject.addProperty("turn",true);
-                            ServerHandler opponethandler=players.get(id);
-                                opponethandler.dataOutputStream.writeUTF(responseObject.toString());
+                            opponentSocket=players.get(id);
+                            opponentSocket.dataOutputStream.writeUTF(responseObject.toString());
                             System.out.println(id);
 
                         } else {
                             responseObject.addProperty("opponentid",1);
                             responseObject.addProperty("turn",false);
-                            ServerHandler opponethandler=players.get(id);
-                            opponethandler.dataOutputStream.writeUTF(responseObject.toString());
+                            opponentSocket=players.get(id);
+                            opponentSocket.dataOutputStream.writeUTF(responseObject.toString());
                             System.out.println(id);
                         }
                         break;
@@ -175,6 +180,25 @@ public class ServerHandler extends Thread {
                         clients.remove(this);
                         players.remove(this.currentID);
                         System.out.println("Player with id " + this.currentID + " closed the client.");
+                        break;
+
+                    case "client_close_while_playing":
+                        clients.remove(this);
+                        players.remove(this.currentID);
+                        opponentID = requestObject.get("opponentId").getAsInt();
+                        opponentSocket = players.get(opponentID);
+                        responseObject.addProperty("type", "opponent_disconnect");
+                        opponentSocket.dataOutputStream.writeUTF(responseObject.toString());
+                        System.out.println("Player with id " + this.currentID + " closed the client while playing.");
+                        break;
+
+
+                    case "show_rec_req":
+                        int gameID = requestObject.get("game_id").getAsInt();
+                        String[] moves = getMoves(gameID);
+                        responseObject.addProperty("type","game_record");
+                        requestObject.addProperty("moves", Arrays.toString(moves));
+                        dataOutputStream.writeUTF(responseObject.toString());
                         break;
 
                 }
@@ -222,13 +246,11 @@ public class ServerHandler extends Thread {
 
     public GameRecord move(JsonObject msg) {
         int gameID = msg.get("game_id").getAsInt();
-        int playerXID = msg.get("player_x_id").getAsInt();
-        int playerOID = msg.get("player_o_id").getAsInt();
-        int stepNumber = msg.get("step_number").getAsInt();
-        String[] stepString =  msg.get("step").getAsString().substring(1, msg.get("step").getAsString().length() - 1).split(", ");
-        int[] step = Arrays.stream(stepString).mapToInt(Integer::parseInt).toArray();
+        int playerID = msg.get("player_id").getAsInt();
+        int position = msg.get("position").getAsInt();
+        int move = msg.get("sign").getAsInt();
         GameRecord gameRecord = new GameRecord();
-        return gameRecord.create(gameID, playerXID, playerOID, stepNumber, step);
+        return gameRecord.create(gameID, playerID, move, position);
     }
 
     public void finishGame(JsonObject msg) {
@@ -236,6 +258,19 @@ public class ServerHandler extends Thread {
         String winnerUsername = msg.get("winner").getAsString();
         Game game = new Game();
         game.finishGame(gameID, winnerUsername);
+    }
+
+    public String[] getMoves(int gameID) {
+        GameRecord gameRecord = new GameRecord();
+        ArrayList<GameRecord> movesAL = gameRecord.findByGameID(gameID);
+        int arraySize = movesAL.size();
+        String[] moves = new String[arraySize];
+
+        for (int i = 0; i < arraySize; i++) {
+            String move = movesAL.get(i).getPosition() + "-" + movesAL.get(i).getMove() + "-" + movesAL.get(i).getPlayerID();
+            moves[i] = move;
+        }
+        return moves;
     }
 
 
