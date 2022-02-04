@@ -284,6 +284,15 @@ public class ServerHandler extends Thread {
 
     public void close(DataInputStream bufferedReader, DataOutputStream bufferedWriter)
     {
+        JsonObject responseObject = new JsonObject();
+        responseObject.addProperty("type", "server_closed");
+        players.forEach((id, handler) -> {
+            try {
+                handler.dataOutputStream.writeUTF(responseObject.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         running= false;
         try {
             if(bufferedReader != null)
