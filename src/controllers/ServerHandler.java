@@ -76,6 +76,8 @@ public class ServerHandler extends Thread {
                     case "logout":
 
                         logout(requestObject);
+                        clients.remove(this);
+                        players.remove(this.currentID);
                         break;
 
                     case "signup":
@@ -193,7 +195,7 @@ public class ServerHandler extends Thread {
                         break;
 
 
-                    case "show_rec_req":
+                    case "request_record":
                         int gameID = requestObject.get("game_id").getAsInt();
                         String[] moves = getMoves(gameID);
                         responseObject.addProperty("type","game_record");
