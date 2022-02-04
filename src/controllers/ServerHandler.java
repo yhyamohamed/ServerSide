@@ -205,7 +205,7 @@ public class ServerHandler extends Thread {
                         int gameID = requestObject.get("game_id").getAsInt();
                         String[] moves = getMoves(gameID);
                         responseObject.addProperty("type","game_record");
-                        requestObject.addProperty("moves", Arrays.toString(moves));
+                        responseObject.addProperty("moves", Arrays.toString(moves));
                         dataOutputStream.writeUTF(responseObject.toString());
                         break;
 
