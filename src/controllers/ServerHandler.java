@@ -144,6 +144,27 @@ public class ServerHandler extends Thread {
                             System.out.println(id);
                         }
                         break;
+                    case "sendInvitation":
+                        int senderId=Integer.parseInt(requestObject.get("senderplayerid").getAsString());
+                        int receiverId=Integer.parseInt(requestObject.get("sendtoid").getAsString());
+                        responseObject.addProperty("type","invitationreceived");
+                        responseObject.addProperty("sender",senderId);
+                        ServerHandler receiverhandler=players.get(receiverId);
+                        System.out.println(senderId+"sended to "+receiverId);
+                        System.out.println(receiverhandler);
+                        System.out.println(players);
+                        receiverhandler.dataOutputStream.writeUTF(responseObject.toString());
+                        System.out.println(receiverId);
+                        break;
+                    case "acceptinvetation":
+                        int accepterId=Integer.parseInt(requestObject.get("accepter").getAsString());
+                        int acceptedId=Integer.parseInt(requestObject.get("accepted").getAsString());
+                        responseObject.addProperty("type","yourinvetationaccepted");
+                        responseObject.addProperty("whoaccepted",accepterId);
+                        ServerHandler acceptedhandler=players.get(acceptedId);
+                        System.out.println(players);
+                        acceptedhandler.dataOutputStream.writeUTF(responseObject.toString());
+                        break;
 
                     case "finish_game":
 
