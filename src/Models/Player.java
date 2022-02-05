@@ -126,6 +126,36 @@ public class Player {
         player.save(player);
     }
 
+    public void wins(int id) {
+        ConnectDB connectDB = new ConnectDB();
+
+        String sql = "update player set wins = wins + 1, score = score + 50 where player_id = ?";
+
+        try (Connection con = connectDB.getConnection(); PreparedStatement st = con.prepareStatement(sql);) {
+
+            st.setInt(1, id);
+            st.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loses(int id) {
+        ConnectDB connectDB = new ConnectDB();
+
+        String sql = "update player set losses = losses + 1 where player_id = ?";
+
+        try (Connection con = connectDB.getConnection(); PreparedStatement st = con.prepareStatement(sql);) {
+
+            st.setInt(1, id);
+            st.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void save(Player player) {
         ConnectDB connectDB = new ConnectDB();
 

@@ -189,7 +189,6 @@ public class ServerHandler extends Thread {
                         break;
 
                     case "finish_game":
-
                         finishGame(requestObject);
                         break;
 
@@ -271,10 +270,19 @@ public class ServerHandler extends Thread {
     }
 
     public void finishGame(JsonObject msg) {
+        int winnerID = msg.get("winner").getAsInt();
+        int loserID = msg.get("looser").getAsInt();
         int gameID = msg.get("game_id").getAsInt();
-        String winnerUsername = msg.get("winner").getAsString();
-        Game game = new Game();
-        game.finishGame(gameID, winnerUsername);
+
+        System.out.println(winnerID);
+        System.out.println(loserID);
+
+        Player player = new Player();
+
+        player.wins(winnerID);
+        player.loses(loserID);
+
+        new Game().finishGame(gameID, Integer.toString(winnerID));
     }
 
     public String[] getMoves(int gameID) {
