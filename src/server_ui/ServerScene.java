@@ -22,6 +22,7 @@ public class ServerScene extends AnchorPane {
 
     public Button stopServerBtn;
     public Button startServerBtn;
+    public Button refreshServerBtn;
     public Label title;
     private TableView<Player> table;
     private TableColumn<Player, String> tableColumn_username;
@@ -35,6 +36,7 @@ public class ServerScene extends AnchorPane {
 
         stopServerBtn = new Button();
         startServerBtn = new Button();
+        refreshServerBtn = new Button();
 
         table = new TableView<Player>();
 //      table.setId("users_table");
@@ -45,9 +47,9 @@ public class ServerScene extends AnchorPane {
         tableColumn_password = new TableColumn<Player, String>("password");
         tableColumn_username.setId("hashedPassword");
 
-        tableColumn_online = new TableColumn<Player,Boolean>("Online");
-        tableColumn_losses = new TableColumn<Player,Integer>("losses");
-        tableColumn_wins = new TableColumn<Player,Integer>("wins");
+        tableColumn_online = new TableColumn<Player, Boolean>("Online");
+        tableColumn_losses = new TableColumn<Player, Integer>("losses");
+        tableColumn_wins = new TableColumn<Player, Integer>("wins");
 
         table.setItems(getOnlineUsers());
 
@@ -58,7 +60,7 @@ public class ServerScene extends AnchorPane {
         tableColumn_wins.setCellValueFactory(new PropertyValueFactory<Player, Integer>("wins"));
 
 
-        table.getColumns().addAll(tableColumn_username,tableColumn_password,tableColumn_online,tableColumn_losses,tableColumn_wins);
+        table.getColumns().addAll(tableColumn_username, tableColumn_password, tableColumn_online, tableColumn_losses, tableColumn_wins);
 
 
         title = new Label();
@@ -75,9 +77,16 @@ public class ServerScene extends AnchorPane {
 //        VBox vbox = new VBox();
 //        vbox.setSpacing(5);
 //
+        startServerBtn.setLayoutX(20.0);
+        startServerBtn.setLayoutY(60.0);
+        startServerBtn.setMnemonicParsing(false);
+        startServerBtn.setPrefHeight(50.0);
+        startServerBtn.setPrefWidth(150.0);
+        startServerBtn.getStyleClass().add("stop_server_button");
+        startServerBtn.getStylesheets().add("/server_ui/Resources/styles.css");
+        startServerBtn.setText("Start server");
 
-
-        stopServerBtn.setLayoutX(100.0);
+        stopServerBtn.setLayoutX(200.0);
         stopServerBtn.setLayoutY(60.0);
         stopServerBtn.setMnemonicParsing(false);
         stopServerBtn.setPrefHeight(50.0);
@@ -87,14 +96,16 @@ public class ServerScene extends AnchorPane {
         stopServerBtn.setText("Stop server");
         stopServerBtn.setVisible(true);
 
-        startServerBtn.setLayoutX(350.0);
-        startServerBtn.setLayoutY(60.0);
-        startServerBtn.setMnemonicParsing(false);
-        startServerBtn.setPrefHeight(50.0);
-        startServerBtn.setPrefWidth(150.0);
-        startServerBtn.getStyleClass().add("stop_server_button");
-        startServerBtn.getStylesheets().add("/server_ui/Resources/styles.css");
-        startServerBtn.setText("Start server");
+        refreshServerBtn.setLayoutX(380.0);
+        refreshServerBtn.setLayoutY(60.0);
+        refreshServerBtn.setMnemonicParsing(false);
+        refreshServerBtn.setPrefHeight(50.0);
+        refreshServerBtn.setPrefWidth(150.0);
+        refreshServerBtn.getStyleClass().add("stop_server_button");
+        refreshServerBtn.getStylesheets().add("/server_ui/Resources/styles.css");
+        refreshServerBtn.setText("Refresh");
+        refreshServerBtn.setVisible(true);
+
 
         title.setLayoutX(170.0);
         title.setLayoutY(5.0);
@@ -109,11 +120,12 @@ public class ServerScene extends AnchorPane {
 
         getChildren().add(stopServerBtn);
         getChildren().add(startServerBtn);
+        getChildren().add(refreshServerBtn);
         getChildren().add(title);
         getChildren().add(table);
 
 
-        new ServerSceneController(this, primaryStage);
+        new ServerSceneController(this, primaryStage,table,refreshServerBtn);
 
     }
 
@@ -128,6 +140,10 @@ public class ServerScene extends AnchorPane {
         return list;
     }
 
+// fetch player done
+// injiect el data gwa el table done
+// updatable with a thread
+
     public void startServerBtnHandler(EventHandler<ActionEvent> Action) {
         startServerBtn.setOnAction(Action);
     }
@@ -135,5 +151,9 @@ public class ServerScene extends AnchorPane {
     public void stopServerBtnHandler(EventHandler<ActionEvent> Action) {
         stopServerBtn.setOnAction(Action);
     }
+    public void refreshServerBtnHandler(EventHandler<ActionEvent> Action) {
+        refreshServerBtn.setOnAction(Action);
+    }
+
 
 }

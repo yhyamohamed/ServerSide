@@ -247,7 +247,7 @@ public class Player {
 
         ConnectDB connectDB = new ConnectDB();
 
-        String sql = "select * from player ";
+        String sql = "select * from player order by score ";
 
         ArrayList<Player> allPlayers = new ArrayList<>();
 

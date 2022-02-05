@@ -3,6 +3,8 @@ package controllers;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import Models.*;
+import javafx.application.Platform;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -42,6 +44,13 @@ public class ServerHandler extends Thread {
         while (running) {
 
             try {
+//                Platform.runLater(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        System.out.println("xxxxxxxxxxxxxxxxxxxx");
+//
+//                    }
+//                });
                 String lineSent = dataInputStream.readUTF();
                 if(lineSent == null)throw new IOException();
                 JsonObject requestObject = JsonParser.parseString(lineSent).getAsJsonObject();

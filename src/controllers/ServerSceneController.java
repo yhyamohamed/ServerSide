@@ -1,9 +1,12 @@
 package controllers;
 
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import server_ui.ServerScene;
 
 public class ServerSceneController {
@@ -13,33 +16,26 @@ public class ServerSceneController {
     private Button startBtn1;
     private Button stopBtn1;
     private boolean clicked = false;
-
-// t3ref el columns   11111111111111
-//    public TableView<Player> users_table;
-//    public TableColumn<Player, String> username;
-    ///
-//    public ObservableList<Player> getOnlineUsers() {
-//        ObservableList<Player> list = FXCollections.observableArrayList();
-//        // get user bring observable list        222222
-//        Player player1 = new Player();
-//        List<Player> players =  player1.findOnlinePlayers();
-//        for (Player player : players) {
-//            list.add(player);
-//        }
-//        return list;
-//    }
+    Button  refreshbtnn;
 
 
-    //    Server server2 = new Server();
-//    Button startBtn, Button stopBtn
-    public ServerSceneController(ServerScene serverScene1, Stage primaryStage) {
 
+    public ServerSceneController(ServerScene serverScene1, Stage primaryStage,TableView table,Button refreshServerBtn) {
+        refreshbtnn = refreshServerBtn;
         serverScene = serverScene1;
 //        startBtn1=startBtn;
 //        stopBtn1=stopBtn;
         serverScene1.startServerBtnHandler(serverStart(primaryStage));
         serverScene1.stopServerBtnHandler(serverStop(primaryStage));
-    }
+        serverScene1.refreshServerBtnHandler(serverRefresh(primaryStage,serverScene1,table));
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        pause.setOnFinished(event -> {
+           // System.out.println("hahahahahaah");
+        });
+        pause.playFromStart();
+
+}
+
 
     private EventHandler<ActionEvent> serverStart(Stage primaryStage) {
         return new EventHandler<ActionEvent>() {
@@ -71,5 +67,21 @@ public class ServerSceneController {
         };
     }
 
+    private EventHandler<ActionEvent> serverRefresh(Stage primaryStage,ServerScene serverScene1,TableView table) {
+        return new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Refreshed1111");
+                 table.setItems(serverScene1.getOnlineUsers());
+                table.refresh();
+                 System.out.println("Refreshed");
+            }
+        };
+    }
 
+//   public Button refreshBtn(){
+//        return  refreshbtnn;
+//   }
 }
+
+
