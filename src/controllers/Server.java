@@ -12,7 +12,7 @@ public class Server {
     private static ServerSocket serverSocket;
 
 
-    public Server()  {
+    public Server() {
         try {
             serverSocket = new ServerSocket(5001);
             startingServer();
@@ -22,13 +22,14 @@ public class Server {
         }
 
     }
-// open server
-    public static void startingServer() {
-        if(serverSocket == null ) {
-            System.out.println("null found ");
-        }else{
 
-        x = new Thread(() -> {
+    // open server
+    public static void startingServer() {
+        if (serverSocket == null) {
+            System.out.println("null found ");
+        } else {
+
+            x = new Thread(() -> {
                 while (!serverSocket.isClosed()) {
                     try {
                         socket = serverSocket.accept();
@@ -38,16 +39,15 @@ public class Server {
                     }
                 }
             });
-        x.start();
+            x.start();
 
         }
     }
 
-// closing server
-    public static void close()
-    {
+    // closing server
+    public static void close() {
 
-        if(serverSocket !=null){
+        if (serverSocket != null) {
             try {
                 x.stop();
                 serverSocket.close();

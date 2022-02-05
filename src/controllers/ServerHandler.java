@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import Models.*;
+import javafx.application.Platform;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -43,6 +45,13 @@ public class ServerHandler extends Thread {
         while (running) {
 
             try {
+//                Platform.runLater(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        System.out.println("xxxxxxxxxxxxxxxxxxxx");
+//
+//                    }
+//                });
                 String lineSent = dataInputStream.readUTF();
                 if(lineSent == null)throw new IOException();
                 JsonObject requestObject = JsonParser.parseString(lineSent).getAsJsonObject();
@@ -181,7 +190,6 @@ public class ServerHandler extends Thread {
                         break;
 
                     case "finish_game":
-
                         finishGame(requestObject);
                         break;
 
@@ -242,7 +250,7 @@ public class ServerHandler extends Thread {
                         int gameID = requestObject.get("game_id").getAsInt();
                         String[] moves = getMoves(gameID);
                         responseObject.addProperty("type","game_record");
-                        requestObject.addProperty("moves", Arrays.toString(moves));
+                        responseObject.addProperty("moves", Arrays.toString(moves));
                         dataOutputStream.writeUTF(responseObject.toString());
                         break;
 
@@ -299,10 +307,19 @@ public class ServerHandler extends Thread {
     }
 
     public void finishGame(JsonObject msg) {
+        int winnerID = msg.get("winner").getAsInt();
+        int loserID = msg.get("looser").getAsInt();
         int gameID = msg.get("game_id").getAsInt();
-        String winnerUsername = msg.get("winner").getAsString();
-        Game game = new Game();
-        game.finishGame(gameID, winnerUsername);
+
+        System.out.println(winnerID);
+        System.out.println(loserID);
+
+        Player player = new Player();
+
+        player.wins(winnerID);
+        player.loses(loserID);
+
+        new Game().finishGame(gameID, Integer.toString(winnerID));
     }
 
     public String[] getMoves(int gameID) {
