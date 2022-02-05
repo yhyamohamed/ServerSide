@@ -79,16 +79,20 @@ public class ServerHandler extends Thread {
                             responseObject.addProperty("losses", player.getLosses());
                             players.put(player.getId(),this);
                             this.currentID = player.getId();
+                            //clients.add(this);
                             dataOutputStream.writeUTF(responseObject.toString());
+                            updateList(responseObject);
                         }
                         break;
 
-                    case "logout":
+                    /*case "logout":
 
                         logout(requestObject);
                         clients.remove(this);
+                        System.out.println("loggggout");
                         players.remove(this.currentID);
-                        break;
+
+                        break;*/
 
                     case "signup":
 
@@ -174,9 +178,47 @@ public class ServerHandler extends Thread {
                         break;
 
                     case "client_close":
+                        String closingClientusername=requestObject.get("username").getAsString();
+                        logout( closingClientusername);
+                        this.dataOutputStream.close();
+                        this.dataInputStream.close();
                         clients.remove(this);
                         players.remove(this.currentID);
+
                         System.out.println("Player with id " + this.currentID + " closed the client.");
+                        responseObject.addProperty("type","update-list");
+                        Player player3=new Player();
+                        JsonArray newonlineplayersjsonarr=new JsonArray();
+                        ArrayList<Player> newonlinePlayers=player3.findOnlinePlayers();
+                        for(Player onplayer:newonlinePlayers)
+                        {
+                            JsonObject playerJson=new JsonObject();
+                            playerJson.addProperty("username",onplayer.getUsername());
+                            playerJson.addProperty("id",onplayer.getId());
+                            playerJson.addProperty("score",onplayer.getScore());
+                            newonlineplayersjsonarr.add(playerJson);
+                        }
+                        responseObject.add("onlineplayers",newonlineplayersjsonarr);
+                        System.out.println("new online players"+newonlineplayersjsonarr);
+                        JsonArray newofflineplayersjsonarr=new JsonArray();
+                        ArrayList<Player> newofflinePlayers=player3.findOfflinePlayers();
+                        for(Player offplayer:newofflinePlayers)
+                        {
+                            JsonObject playerJson=new JsonObject();
+                            playerJson.addProperty("username",offplayer.getUsername());
+                            playerJson.addProperty("id",offplayer.getId());
+                            playerJson.addProperty("score",offplayer.getScore());
+                            newofflineplayersjsonarr.add(playerJson);
+                        }
+                        System.out.println("new offline players"+newofflineplayersjsonarr);
+                        responseObject.add("offlineplayers",newofflineplayersjsonarr);
+
+                        for(ServerHandler client:clients)
+                        {
+                            System.out.println("send for clients about");
+                            client.dataOutputStream.writeUTF(responseObject.toString());
+                        }
+
                         break;
 
                     case "client_close_while_playing":
@@ -259,12 +301,50 @@ public class ServerHandler extends Thread {
         return player.login(username, password);
     }
 
-    public void logout(JsonObject msg) {
-        String username = msg.get("username").getAsString();
+    public void logout(String name) {
+        String username = name;
         Player player = new Player();
         player.logout(username);
     }
+    public void updateList(JsonObject responseObject){
+        responseObject.addProperty("type","update-list");
+        Player player3=new Player();
+        JsonArray newonlineplayersjsonarr=new JsonArray();
+        ArrayList<Player> newonlinePlayers=player3.findOnlinePlayers();
+        for(Player onplayer:newonlinePlayers)
+        {
+            JsonObject playerJson=new JsonObject();
+            playerJson.addProperty("username",onplayer.getUsername());
+            playerJson.addProperty("id",onplayer.getId());
+            playerJson.addProperty("score",onplayer.getScore());
+            newonlineplayersjsonarr.add(playerJson);
+        }
+        responseObject.add("onlineplayers",newonlineplayersjsonarr);
+        System.out.println("new online players"+newonlineplayersjsonarr);
+        JsonArray newofflineplayersjsonarr=new JsonArray();
+        ArrayList<Player> newofflinePlayers=player3.findOfflinePlayers();
+        for(Player offplayer:newofflinePlayers)
+        {
+            JsonObject playerJson=new JsonObject();
+            playerJson.addProperty("username",offplayer.getUsername());
+            playerJson.addProperty("id",offplayer.getId());
+            playerJson.addProperty("score",offplayer.getScore());
+            newofflineplayersjsonarr.add(playerJson);
+        }
+        System.out.println("new offline players"+newofflineplayersjsonarr);
+        responseObject.add("offlineplayers",newofflineplayersjsonarr);
 
+        for(ServerHandler client:clients)
+        {
+            System.out.println("send for clients about");
+            try {
+                client.dataOutputStream.writeUTF(responseObject.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
     public boolean signup(JsonObject msg) {
         String username = msg.get("username").getAsString();
         String password = msg.get("password").getAsString();
