@@ -1,5 +1,6 @@
 package controllers;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import Models.*;
@@ -198,6 +199,42 @@ public class ServerHandler extends Thread {
                         responseObject.addProperty("type", "opponent_disconnect");
                         opponentSocket.dataOutputStream.writeUTF(responseObject.toString());
                         System.out.println("Player with id " + this.currentID + " closed the client while playing.");
+                        break;
+                    case "getonlineplayers" :
+                        Player player1=new Player();
+                        JsonArray onlineplayersjsonarr=new JsonArray();
+                        ArrayList<Player> onlinePlayers=player1.findOnlinePlayers();
+                        for(Player onplayer:onlinePlayers)
+                        {
+                            JsonObject playerJson=new JsonObject();
+                            playerJson.addProperty("username",onplayer.getUsername());
+                            playerJson.addProperty("id",onplayer.getId());
+                            playerJson.addProperty("score",onplayer.getScore());
+                            onlineplayersjsonarr.add(playerJson);
+                        }
+                        System.out.println(onlineplayersjsonarr);
+                        responseObject.add("onlineplayers",onlineplayersjsonarr);
+                        responseObject.addProperty("type","onlineplayers");
+                        dataOutputStream.writeUTF(responseObject.toString());
+
+                        break;
+                    case "getofflineplayers" :
+                        Player player2=new Player();
+                        JsonArray offlineplayersjsonarr=new JsonArray();
+                        ArrayList<Player> offlinePlayers=player2.findOfflinePlayers();
+                        for(Player offplayer:offlinePlayers)
+                        {
+                            JsonObject playerJson=new JsonObject();
+                            playerJson.addProperty("username",offplayer.getUsername());
+                            playerJson.addProperty("id",offplayer.getId());
+                            playerJson.addProperty("score",offplayer.getScore());
+                            offlineplayersjsonarr.add(playerJson);
+                        }
+                        System.out.println(offlineplayersjsonarr);
+                        responseObject.add("offlineplayers",offlineplayersjsonarr);
+                        responseObject.addProperty("type","offlineplayers");
+                        dataOutputStream.writeUTF(responseObject.toString());
+
                         break;
 
 
