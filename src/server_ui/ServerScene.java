@@ -2,6 +2,7 @@ package server_ui;
 
 import Models.Player;
 import controllers.ServerSceneController;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.List;
 
 public class ServerScene extends AnchorPane {
@@ -43,13 +45,20 @@ public class ServerScene extends AnchorPane {
         tableColumn_username = new TableColumn<Player, String>("username");
         tableColumn_username.setId("username");
 //        tableColumn_username.setStyle("/server_ui/Resources/styles.css");
+        tableColumn_username.setPrefWidth(111.6);
 
         tableColumn_password = new TableColumn<Player, String>("password");
-        tableColumn_username.setId("hashedPassword");
+        tableColumn_password.setId("hashedPassword");
+        tableColumn_password.setPrefWidth(111.6);
+
+
 
         tableColumn_online = new TableColumn<Player, Boolean>("Online");
+        tableColumn_online.setPrefWidth(111.6);
         tableColumn_losses = new TableColumn<Player, Integer>("losses");
+        tableColumn_losses.setPrefWidth(111.6);
         tableColumn_wins = new TableColumn<Player, Integer>("wins");
+        tableColumn_wins.setPrefWidth(111.6);
 
         table.setItems(getOnlineUsers());
 
@@ -74,8 +83,11 @@ public class ServerScene extends AnchorPane {
         table.setLayoutY(120.0);
         table.setMinHeight(250);
         table.setMinWidth(558);
-//        VBox vbox = new VBox();
-//        vbox.setSpacing(5);
+        VBox vbox = new VBox();
+        vbox.setSpacing(20);
+
+
+
 //
         startServerBtn.setLayoutX(20.0);
         startServerBtn.setLayoutY(60.0);
@@ -118,11 +130,13 @@ public class ServerScene extends AnchorPane {
 
         table.setMaxSize(350, 200);
 
+//        vbox.getChildren().add(table);
         getChildren().add(stopServerBtn);
         getChildren().add(startServerBtn);
         getChildren().add(refreshServerBtn);
         getChildren().add(title);
         getChildren().add(table);
+
 
 
         new ServerSceneController(this, primaryStage,table,refreshServerBtn);
@@ -142,7 +156,9 @@ public class ServerScene extends AnchorPane {
 
 // fetch player done
 // injiect el data gwa el table done
-// updatable with a thread
+
+
+
 
     public void startServerBtnHandler(EventHandler<ActionEvent> Action) {
         startServerBtn.setOnAction(Action);
@@ -154,6 +170,8 @@ public class ServerScene extends AnchorPane {
     public void refreshServerBtnHandler(EventHandler<ActionEvent> Action) {
         refreshServerBtn.setOnAction(Action);
     }
+
+
 
 
 }

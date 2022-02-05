@@ -29,11 +29,13 @@ public class Server {
             System.out.println("null found ");
         } else {
 
+
             x = new Thread(() -> {
                 while (!serverSocket.isClosed()) {
                     try {
                         socket = serverSocket.accept();
                         new ServerHandler(socket);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

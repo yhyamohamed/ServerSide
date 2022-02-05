@@ -8,10 +8,13 @@
 }
 
 .label{
-    -fx-font-size:17; 
+    -fx-font-size:17;
     -fx-font-weight:bold;
-    -fx-text-fill:#dbe2e5;
-
+    /*-fx-text-fill:#2781a8;*/
+    -fx-text-fill: rgb(133, 83, 151);
+}
+.table-cell {
+    -fx-alignment: BASELINE_CENTER;
 }
 .background{
     fx-background-repeat: no-repeat;
@@ -117,6 +120,6 @@
     -fx-font-weight: bold;
     -fx-text-fill: rgb(220,220,220);
 }
-#username {
-    -fx-opacity: 100%;
-}
+/*.table-view {*/
+/*    -fx-background-color: black;*/
+/*}*/
