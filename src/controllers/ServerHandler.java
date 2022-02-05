@@ -262,7 +262,7 @@ public class ServerHandler extends Thread {
 
             } catch (EOFException | SocketException e) {
                 running = false;
-                close(dataInputStream, dataOutputStream);
+                return;
             } catch (IOException e) {
 
                 running = false;
@@ -346,13 +346,16 @@ public class ServerHandler extends Thread {
     {
         JsonObject responseObject = new JsonObject();
         responseObject.addProperty("type", "server_closed");
-        players.forEach((id, handler) -> {
-            try {
-                handler.dataOutputStream.writeUTF(responseObject.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        System.out.println("Current players connected:  "+players.size());
+        if(players.size() > 0) {
+            players.forEach((id, handler) -> {
+                try {
+                    handler.dataOutputStream.writeUTF(responseObject.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
         running= false;
         try {
             if(bufferedReader != null)
