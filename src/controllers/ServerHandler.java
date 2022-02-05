@@ -147,12 +147,16 @@ public class ServerHandler extends Thread {
                         break;
                         case "sendInvitation":
                         int senderId=Integer.parseInt(requestObject.get("senderplayerid").getAsString());
+                        String senderUsername=requestObject.get("senderusername").getAsString();
+                        int senderScore=requestObject.get("senderscore").getAsInt();
                         int receiverId=Integer.parseInt(requestObject.get("sendtoid").getAsString());
                         game = createGame();
                         System.out.println(game.getId());
                         responseObject.addProperty("game_id", game.getId());
                         responseObject.addProperty("type","invitationreceived");
                         responseObject.addProperty("sender",senderId);
+                        responseObject.addProperty("opponentusername",senderUsername);
+                        responseObject.addProperty("opponentsscore",senderScore);
                         ServerHandler receiverhandler=players.get(receiverId);
                         System.out.println(senderId+"sended to "+receiverId);
                         System.out.println(receiverhandler);
@@ -175,6 +179,8 @@ public class ServerHandler extends Thread {
 
                     case "finish_game":
                         finishGame(requestObject);
+
+                        updateList(responseObject);
                         break;
 
                     case "client_close":
