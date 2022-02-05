@@ -141,27 +141,7 @@ public class ServerHandler extends Thread {
                             opponentSocket.dataOutputStream.writeUTF(responseObject.toString());;
 
                         break;
-                    case "getOpponentId" :
-                        //int id=Integer.parseInt(requestObject.get("playerid").getAsString());
-                        int id = requestObject.get("playerid").getAsInt();
-                        System.out.println("getopponentidserver");
-                        if(id==1)
-                        {
-                            responseObject.addProperty("opponentid",2);
-                            responseObject.addProperty("turn",true);
-                            opponentSocket=players.get(id);
-                            opponentSocket.dataOutputStream.writeUTF(responseObject.toString());
-                            System.out.println(id);
-
-                        } else {
-                            responseObject.addProperty("opponentid",1);
-                            responseObject.addProperty("turn",false);
-                            opponentSocket=players.get(id);
-                            opponentSocket.dataOutputStream.writeUTF(responseObject.toString());
-                            System.out.println(id);
-                        }
-                        break;
-                    case "sendInvitation":
+                        case "sendInvitation":
                         int senderId=Integer.parseInt(requestObject.get("senderplayerid").getAsString());
                         int receiverId=Integer.parseInt(requestObject.get("sendtoid").getAsString());
                         game = createGame();

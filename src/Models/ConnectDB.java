@@ -8,7 +8,7 @@ class ConnectDB {
 
     public Connection getConnection() throws SQLException {
 
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/tik_tak_toe", "root", "Hegabo192");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/tik_tak_toe", "root", "Mido@ITI");
 
     }
 
